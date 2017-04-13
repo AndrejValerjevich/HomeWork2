@@ -22,29 +22,20 @@ $title = "Веб-приложение";
 #endregion
 
 #region//Алгоритм для вычисления принадлежности ряда ФИБОНАЧЧИ
-function algorithm($ClassForFieldset)
+function is_fibonacci()
 {
-    $inputNumber = $_POST["inputNumber"];
+    $input_number = $_POST["inputNumber"];
+    $is_belong = false;
     $variable1 = 1;
     $variable2 = 1;
-    $variable3 = 0;
     $count = 0;
     do {
-        if ($variable1 > $_POST["inputNumber"]) {
-            return "<fieldset class=\"$ClassForFieldset\">
-             Задуманное число <span class=\"answer-text-color\">НЕ ВХОДИТ</span> в числовой ряд! </fieldset> 
-                    <br>Введенное значение: $inputNumber
-                    <br>Значение переменной 1: $variable1 (текущее значение ряда ФИБОНАЧЧИ)
-                    <br>Значение переменной 2: $variable2 (предыдущее значение ряда ФИБОНАЧЧИ)
-                    <br>Повторений цикла: $count";
+        if ($variable1 > $input_number) {
+            return array($is_belong, $input_number, $variable1, $variable2, $count);
         } else {
-            if ($variable1 == $_POST["inputNumber"]) {
-                return "<fieldset class=\"$ClassForFieldset\">
-             Задуманное число <span class=\"answer-text-color\">ВХОДИТ</span> в числовой ряд! </fieldset> 
-                        <br>Введенное значение: $inputNumber
-                        <br>Значение переменной 1: $variable1 (текущее значение ряда ФИБОНАЧЧИ)
-                        <br>Значение переменной 2: $variable2 (предыдущее значение ряда ФИБОНАЧЧИ)
-                        <br>Повторений цикла: $count";
+            if ($variable1 == $input_number) {
+                $is_belong = true;
+                return array($is_belong, $input_number, $variable1, $variable2, $count);
             } else {
                 $variable3 = $variable1;
                 $variable1 = $variable1 + $variable2;
@@ -52,13 +43,9 @@ function algorithm($ClassForFieldset)
                 $count++;
             }
         }
-    } while ($variable1 < $_POST["inputNumber"] || $variable1 != $_POST["inputNumber"]);
-    return "<fieldset class=\"$ClassForFieldset\">
-             Задуманное число <span class=\"answer-text-color\">ВХОДИТ</span> в числовой ряд! </fieldset>
-            <br>Введенное значение: $inputNumber
-            <br>Значение переменной 1: $variable1 (текущее значение ряда ФИБОНАЧЧИ)
-            <br>Значение переменной 2: $variable2 (предыдущее значение ряда ФИБОНАЧЧИ)
-            <br>Повторений цикла: $count";
+    } while ($variable1 < $input_number || $variable1 != $input_number);
+    $is_belong = true;
+    return array($is_belong, $input_number, $variable1, $variable2, $count);
 }
 
 #endregion
@@ -91,11 +78,25 @@ function algorithm($ClassForFieldset)
                      <p><input type=\"submit\" value=\"Отправить\">
                         <input type=\"reset\" value=\"Очистить\"></p>
                   </form>";
+            $is_ok = null;
             if (isset($_POST["inputNumber"])) {
-                    echo "<p>" . algorithm($fieldsetClass) . "</p>";
+                list ($is_belong, $input_number, $variable_1, $variable_2, $count) = is_fibonacci();
+                if ($is_belong == true) {
+                    $is_ok = "ВХОДИТ";
+                }
+                else if ($is_belong == false){
+                    $is_ok = "НЕ ВХОДИТ";
+                }
             } else {
-                echo "";
+                $is_ok = "ПУСТАЯ СТРОКА";
+                return;
             }
+            echo "<fieldset class=\"$fieldsetClass\">
+             Задуманное число <span class=\"answer-text-color\">$is_ok</span> в числовой ряд! </fieldset>
+                    <br>Введенное значение: $input_number
+                    <br>Значение переменной 1: $variable_1 (текущее значение ряда ФИБОНАЧЧИ)
+                    <br>Значение переменной 2: $variable_2 (предыдущее значение ряда ФИБОНАЧЧИ)
+                    <br>Повторений цикла: $count ";
         }
         else {
             echo "<h1 class=\"main-container-h1\">Алгоритм проверки числа на принадлежность к числовому ряду!</h1>";
